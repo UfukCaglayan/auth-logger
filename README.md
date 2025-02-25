@@ -2,11 +2,15 @@ Bu repo kimlik doğrulama işlemleri sonucunda başarılı ve hatalı girişleri
 
 Giriş ekranı:
 
-![image](https://github.com/user-attachments/assets/35730902-1273-43ff-bdbd-4a5c794d938b)
+![image](https://github.com/user-attachments/assets/0107eba4-73a9-4893-96ea-2b0226f5eeda)
 
 Hatalı giriş:
 
-![image](https://github.com/user-attachments/assets/1fea026f-a9d9-4137-966f-d3b4a65a38eb)
+![image](https://github.com/user-attachments/assets/fef273d7-ce9c-4c12-ae78-b4913e9dcc8a)
+
+Şüpheli girişlerin engellenmesi:
+
+![image](https://github.com/user-attachments/assets/10ead109-99ab-47d2-8d91-a52d47a43330)
 
 Logların tutulması ve görüntülenmesi:
 
