@@ -7,12 +7,15 @@ class PasswordService {
     try {
       // Şifre gücü kontrolü
       if (!this.isStrongPassword(password)) {
+        console.log('Geçersiz şifre:', password); // Hangi şifrenin hata verdiğini görelim
         throw new Error('Şifre yeterince güçlü değil');
       }
       
       return await bcrypt.hash(password, this.SALT_ROUNDS);
     } catch (error) {
-      throw new Error('Şifre hashleme hatası');
+      // Orijinal hatayı görelim
+      console.error('Password validation error:', error.message);
+      throw new Error(`Şifre hashleme hatası: ${error.message}`);
     }
   }
 
@@ -25,6 +28,14 @@ class PasswordService {
   }
 
   static isStrongPassword(password) {
+    console.log('Şifre kontrolü:', {
+      length: password.length >= 8,
+      upperCase: /[A-Z]/.test(password),
+      lowerCase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      specialChar: /[!@#$%^&*_|"?.\\\-/$]/.test(password)
+    });
+
     // En az 8 karakter
     if (password.length < 8) return false;
 
@@ -37,8 +48,8 @@ class PasswordService {
     // Rakam kontrolü
     if (!/[0-9]/.test(password)) return false;
 
-    // Özel karakter kontrolü (alt çizgi eklendi)
-    if (!/[!@#$%^&*_]/.test(password)) return false;
+    // Özel karakter kontrolü - tüm özel karakterler
+    if (!/[!@#$%^&*_|"?.\\\-/$]/.test(password)) return false;
 
     return true;
   }

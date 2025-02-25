@@ -11,16 +11,23 @@ exports.login = async (req, res) => {
     
     const clientIP = getClientIP(req);
     
-    // Aynı IP'den yapılan tüm giriş denemelerini kontrol et
-    const recentIPAttempts = await Log.countDocuments({
-      ipAddress: clientIP,
-      action: 'giriş denemesi',
+    // Son 15 dakika içindeki başarısız giriş denemelerini kontrol et
+    const recentFailedAttempts = await Log.countDocuments({
+      email,
+      status: 'başarısız',
       timestamp: { $gte: new Date(Date.now() - 15 * 60 * 1000) }
     });
 
-    if (recentIPAttempts >= 15) { // IP başına 15 deneme hakkı
+    if (recentFailedAttempts >= 5) { // 5 başarısız deneme limiti
+      // Hesap kilitlendi logu oluştur
+      await Log.create({
+        email,
+        action: 'hesap kilitlendi - çok fazla başarısız deneme',
+        status: 'şüpheli',
+        ipAddress: clientIP
+      });
       return res.status(429).json({
-        message: 'Çok fazla giriş denemesi yapıldı. Lütfen daha sonra tekrar deneyin.'
+        message: 'Çok fazla başarısız giriş denemesi. Hesabınız 15 dakika kilitlendi.'
       });
     }
 
@@ -53,7 +60,7 @@ exports.login = async (req, res) => {
         timestamp: { $gte: new Date(Date.now() - 5 * 60 * 1000) }
       });
 
-      if (recentFailedAttempts >= 3) { // Email başına 3 yanlış deneme
+      if (recentFailedAttempts >= 5) {
         await Log.create({
           email,
           action: 'şüpheli giriş aktivitesi',
